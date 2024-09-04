@@ -14,11 +14,12 @@ public class CustomerContext(DbContextOptions<CustomerContext> options) : DbCont
 		// Disabling tracking causes the exception to be thrown
 		optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 	}
+
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		modelBuilder.Entity<Customer>().OwnsMany(
-		order => order.Addresses, ownedNavigationBuilder =>
-		{
+			order => order.Addresses, ownedNavigationBuilder =>
+			{
 				ownedNavigationBuilder.ToJson();
 			});
 	}
