@@ -46,10 +46,20 @@ await using (var context = new CustomerContext(new DbContextOptions<CustomerCont
 
 	if (customer != null)
 	{
+		var customerEntry = context.Entry(customer);
+		customerEntry.State = EntityState.Detached;
+
+		var i = 1;
+		var collectionEntry = customerEntry.Collection(c => c.Addresses);
+		foreach (var address in customer.Addresses)
+		{
+			collectionEntry.FindEntry(address)!.Property("Id").CurrentValue = i++;
+		}
+
+		customerEntry.State = EntityState.Modified;
+	
 		customer.Addresses = [newAddress];
 		repository.Update(customer);
-
-		context.Entry(customer).State = EntityState.Modified;
 	}
 
 	await context.SaveChangesAsync();
